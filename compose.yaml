@@ -1,0 +1,13 @@
+
+services:
+  playwright:
+    build:
+      context: ./playwright
+      dockerfile: Dockerfile
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./playwright/allure-results:/app/allure-results
+      - ./playwright/allure-report:/app/allure-report
+    environment:
+      - CI=true
