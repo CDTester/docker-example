@@ -1,0 +1,207 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions: 
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout code
+      - name: 📥 Checkout code
+        uses: actions/checkout@v5
+
+      # set up Node.js
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v6
+        with: 
+          node-version: "22.11.0"
+          cache: 'npm'
+
+      # Install test framework
+      - name: 🔨 Install Playwright framework
+        run: npm ci
+
+      # Install test framework
+      - name: 🎭 Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      # Setup Java (required for Allure)
+      - name: ☕ Setup Java
+        uses: actions/setup-java@v4
+        if: always()
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Install Allure CLI
+      - name: 📊 Install Allure
+        if: always()
+        run: |
+          wget -q https://github.com/allure-framework/allure2/releases/download/2.25.0/allure-2.25.0.tgz
+          tar -zxf allure-2.25.0.tgz -C /opt/
+          sudo ln -s /opt/allure-2.25.0/bin/allure /usr/bin/allure
+          allure --version
+
+     # Get existing gh-pages content (for history)
+      - name: 📜 Download existing gh-pages
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages-old
+
+      # Copy history from previous run
+      - name: 📋 Restore Allure history
+        if: always()
+        continue-on-error: true
+        run: |
+          if [ -d "gh-pages-old/allure-report/history" ]; then
+            echo "Found history in gh-pages-old/allure-report/history"
+            mkdir -p allure-results/history
+            cp -r gh-pages-old/allure-report/history/* allure-results/history/
+            echo "History files copied:"
+            ls -la allure-results/history/
+          else
+            echo "No previous history found - this is the first run"
+          fi
+
+      # Run Playwright Tests
+      - name: 🧪 Run Playwright tests
+        id: tests
+        run: npm run test --testenv=dev
+        continue-on-error: true
+
+      # Generate Allure report
+      - name: 📊 Generate Allure report
+        if: always()
+        run: |
+          echo "Generating Allure report..."
+          allure generate allure-results --clean -o allure-report
+          
+          echo "Checking for history in generated report..."
+          if [ -d "allure-report/history" ]; then
+            echo "✓ History folder exists in allure-report"
+            ls -la allure-report/history/
+          else
+            echo "✗ No history folder in allure-report"
+          fi
+          
+          echo "Allure report generated successfully"
+
+
+      # Create directory structure for GitHub Pages
+      - name: 📁 Prepare reports for GitHub Pages
+        if: always()
+        run: |
+          mkdir -p gh-pages
+          cp -r allure-report gh-pages/allure-report
+
+          # Copy Playwright report to gh-pages/playwright-report
+          echo "Copying Playwright report..."
+          mkdir -p gh-pages/playwright-report
+          cp -r playwright-report/* gh-pages/playwright-report/
+
+          # Create index.html to redirect or list reports
+          cat > gh-pages/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Test Reports</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body { font-family: Arial; background: linear-gradient(135deg, #9dffff 0%, #4b7ea2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+              .container { background: white; border-radius: 16px; padding: 48px; max-width: 900px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+              h1 { color: #333; text-align: center; margin-bottom: 24px; font-size: 32px; }
+              .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px; }
+              .report-card { background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 12px; padding: 28px; text-decoration: none; }
+              .report-card:hover { border-color: #667eea; }
+              .report-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+              .report-card h2 { color: #333; font-size: 22px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+              .report-card p { color: #666; line-height: 1.6; font-size: 14px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>🧪 Playwright Test Reports Dashboard</h1>
+              
+              <div class="report-grid">
+                <a href="./allure-report/index.html" class="report-card">
+                  <div class="report-icon">📊</div>
+                  <h2>Allure Report</h2>
+                  <p>Comprehensive test analytics with historical trends, detailed execution data, and visual insights</p>
+                </a>
+                
+                <a href="./playwright-report/index.html" class="report-card">
+                  <div class="report-icon">🎭</div>
+                  <h2>Playwright Report</h2>
+                  <p>Native Playwright HTML report with test traces, screenshots, and interactive debugging</p>
+                </a>
+              </div>
+            </div>
+          </body>
+          </html>
+          EOF
+
+          # Verify structure
+          echo "GitHub Pages structure:"
+          ls -la gh-pages/
+          
+          if [ -d "gh-pages/allure-report/history" ]; then
+            echo "✓ History will be preserved"
+            ls -la gh-pages/allure-report/history/
+          fi
+
+      # Archive test reports
+      - name: 📦 Archive test reports
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: test-reports-${{ github.run_number }}
+          path: |
+            allure_results/
+            allure-report/
+            test-results/
+            playwright-report/
+          retention-days: 90
+
+      # Publish test reports
+      - name: 🚀 Publish test report
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: gh-pages
+          keep_files: false
+
+      # Add report to summary
+      - name: 📝 Add report link to summary
+        if: always()
+        run: |
+          echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📄 Reports" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 [View reports page](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 [View Allure report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report/)" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 [view Playwright report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/playwright-report/)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.tests.outcome }}" == "success" ]; then
+            echo "### ✅ Status: All tests passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Status: Some tests failed" >> $GITHUB_STEP_SUMMARY
+          fi
