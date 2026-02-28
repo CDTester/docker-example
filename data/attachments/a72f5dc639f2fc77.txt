@@ -1,4 +1,0 @@
- No environment specified for test HerokuappLoginPage.ts, using default: dev 
- Using environment config from /app/config/environments/dev.json for test HerokuappLoginPage.ts  
- No environment specified for test HerokuappLoginPage.ts, using default: dev 
- Using environment config from /app/config/environments/dev.json for test HerokuappLoginPage.ts  
