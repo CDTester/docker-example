@@ -1,0 +1,3 @@
+ No environment specified for test SeleniumLoginPage.ts, using default: dev 
+ Using environment config from /app/config/environments/dev.json for test SeleniumLoginPage.ts  
+Dialog message: Please enter valid credentials
