@@ -260,7 +260,7 @@ Need to add mong d connection to backend .env and create mongo db functionality 
 ### start up all containers
 `docker compose up -d`
 
-> [!NOTE] 
+> [!NOTE] <br>
 > -d flag tells Docker Compose to run containers in detached mode, meaning they start in the background and immediately return control of your terminal while continuing to run. #
 
 ### shut down and delete all containers
@@ -274,8 +274,6 @@ Need to add mong d connection to backend .env and create mongo db functionality 
 Need a docker registry. Most popular is dockerhub.
 https://hub.docker.com
 
-
-
 ```yml
 services:
   demo:
@@ -283,6 +281,30 @@ services:
 ```
 
 
+Build and tag the image
+```bash
+docker build -t ghcr.io/<github-username>/<repo-name>:latest .
+```
+
+2. Login to GHCR
+```bash
+echo $GITHUB_TOKEN | docker login ghcr.io -u <github-username> --password-stdin
+```
+
+3. Push the image
+```bash
+docker push ghcr.io/<github-username>/<repo-name>:latest
+```
+
+4. Use it in docker-compose
+```yml
+services:
+  app:
+    image: ghcr.io/<github-username>/<repo-name>:latest
+```
+
+then run 
+`docker compose up`
 
 ## Docker commands
 
