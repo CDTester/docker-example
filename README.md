@@ -1,5 +1,13 @@
 # DOCKER
 
+## Build Status
+[![Test Status](https://github.com/CDTester/docker-example/actions/workflows/playwright.yml/badge.svg)](https://github.com/CDTester/docker-example/actions/workflows/playwright.yml)
+[![Test Report](https://github.com/CDTester/docker-example/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/CDTester/docker-example/actions/workflows/pages/pages-build-deployment)
+
+## Latest CI/CD Build Report
+https://cdtester.github.io/docker-example/
+
+
 To build the playwright tests and then execute the tests, run 
 
 ```bash
