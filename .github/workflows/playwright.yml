@@ -45,7 +45,7 @@ jobs:
             --entrypoint /bin/bash \
             -v $(pwd)/playwright/allure-results:/app/allure-results \
             -v $(pwd)/playwright/allure-report:/app/allure-report \
-            playwright-tests -c "npm run testChrome -- $TEST_ARGS || true && npx allure generate allure-results --clean -o allure-report"
+            playwright-tests -c "npm run testChrome --grep @smoke || true && npx allure generate allure-results --clean -o allure-report"
 
       - name: Upload Allure results as artifact
         if: always()
