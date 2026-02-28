@@ -1,1 +1,1 @@
-{"total":0,"items":[]}
+{"total":3,"items":[{"uid":"088a661485a1c0ff1ca86eb7d424a12c","name":"Epic: API tests","statistic":{"failed":0,"broken":0,"skipped":0,"passed":7,"unknown":0,"total":7}},{"uid":"71e2c5d3b669ccca9195025a7a224873","name":"Epic: TodoMVC","statistic":{"failed":0,"broken":0,"skipped":0,"passed":7,"unknown":0,"total":7}},{"uid":"274879dd83365c087fb4450fe322f633","name":"Epic: Playwright","statistic":{"failed":0,"broken":0,"skipped":0,"passed":2,"unknown":0,"total":2}}]}
