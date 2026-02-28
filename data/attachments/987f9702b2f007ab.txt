@@ -1,2 +1,0 @@
- No environment specified for test UserApi, using default: dev 
- Using environment config from /app/config/environments/dev.json for test UserApi  
