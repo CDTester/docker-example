@@ -1,0 +1,66 @@
+ No environment specified for test HerokuappLoginPage.ts, using default: dev 
+ Using environment config from /app/config/environments/dev.json for test HerokuappLoginPage.ts  
+ No environment specified for test HerokuappLoginPage.ts, using default: dev 
+ Using environment config from /app/config/environments/dev.json for test HerokuappLoginPage.ts  
+ No environment specified for test HerokuappLoginPage.ts, using default: dev 
+ Using environment config from /app/config/environments/dev.json for test HerokuappLoginPage.ts  
+ No environment specified for test HerokuappLoginPage.ts, using default: dev 
+ Using environment config from /app/config/environments/dev.json for test HerokuappLoginPage.ts  
+Auth state created successfully
+{
+  "cookies": [
+    {
+      "name": "optimizelySegments",
+      "value": "%7B%7D",
+      "domain": ".the-internet.herokuapp.com",
+      "path": "/",
+      "expires": 1806868102.793419,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "optimizelyEndUserId",
+      "value": "oeu1772308102794r0.31686587252716847",
+      "domain": ".the-internet.herokuapp.com",
+      "path": "/",
+      "expires": 1806868102.795053,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "optimizelyBuckets",
+      "value": "%7B%7D",
+      "domain": ".the-internet.herokuapp.com",
+      "path": "/",
+      "expires": 1806868102.796391,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "rack.session",
+      "value": "BAh7CkkiD3Nlc3Npb25faWQGOgZFVEkiRWViZjM3MTQzZGIyZWY2NDQ4MDY0%0AYTU1MDI4ODY0NzBjMzg3ZDMxNTUwOTNkMjczNjFmZDllNGNkOWVkZmQ4ZjkG%0AOwBGSSIJY3NyZgY7AEZJIiVhNjViMDk0YzYwMzc2NDg0NWI4NTJhZTViODVh%0ANTBiYgY7AEZJIg10cmFja2luZwY7AEZ7B0kiFEhUVFBfVVNFUl9BR0VOVAY7%0AAFRJIi1iZDU4Nzg5NmEyZmQ0NzQ2Y2I1YjQ2Y2QxNzlhZTBjMjQ5NzkyNDU0%0ABjsARkkiGUhUVFBfQUNDRVBUX0xBTkdVQUdFBjsAVEkiLTEwODBjOGZkNjQy%0ANzJiZDg1OTZmZjI4MjMwNzVjMDUzOWNjNDNkOGEGOwBGSSIKZmxhc2gGOwBG%0AewBJIg11c2VybmFtZQY7AEZJIg10b21zbWl0aAY7AFQ%3D%0A--13c55df3837ffb6094324bb62b4434812a4e827f",
+      "domain": "the-internet.herokuapp.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "optimizelyPendingLogEvents",
+      "value": "%5B%22n%3Dhttps%253A%252F%252Fthe-internet.herokuapp.com%252Fsecure%26u%3Doeu1772308102794r0.31686587252716847%26wxhr%3Dtrue%26t%3D1772308103085%26f%3D298349752%2C318188263%22%2C%22n%3Dengagement%26g%3D298283957%26u%3Doeu1772308102794r0.31686587252716847%26wxhr%3Dtrue%26t%3D1772308103005%26f%3D298349752%2C318188263%22%2C%22n%3Dhttps%253A%252F%252Fthe-internet.herokuapp.com%252Flogin%26u%3Doeu1772308102794r0.31686587252716847%26wxhr%3Dtrue%26t%3D1772308102797%26f%3D298349752%2C318188263%22%5D",
+      "domain": ".the-internet.herokuapp.com",
+      "path": "/",
+      "expires": 1772308118,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}
+ No environment specified for test HerokuappLoginPage.ts, using default: dev 
+ Using environment config from /app/config/environments/dev.json for test HerokuappLoginPage.ts  
