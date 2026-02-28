@@ -6,6 +6,23 @@ on:
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Test tags to run (e.g., @smoke, @regression, @api)'
+        required: false
+        type: string
+        default: ''
+      browser:
+        description: 'Browser to run tests on'
+        required: false
+        type: choice
+        options:
+          - 'all'
+          - 'chromium'
+          - 'firefox'
+          - 'webkit'
+        default: 'all'
+
 
 permissions: 
   contents: write
@@ -41,11 +58,26 @@ jobs:
 
       - name: Run Playwright tests in Docker
         run: |
+          # Build the test command based on inputs
+          TEST_CMD="npx playwright test"
+          
+          # Add grep filter if tags are provided
+          if [ -n "${{ github.event.inputs.tags }}" ]; then
+            TEST_CMD="$TEST_CMD --grep '${{ github.event.inputs.tags }}'"
+          fi
+          
+          # Add browser project filter if specified
+          if [ "${{ github.event.inputs.browser }}" != "all" ] && [ -n "${{ github.event.inputs.browser }}" ]; then
+            TEST_CMD="$TEST_CMD --project=${{ github.event.inputs.browser }}"
+          fi
+          
+          echo "Running: $TEST_CMD"
+          
           docker run --rm \
             --entrypoint /bin/bash \
             -v $(pwd)/playwright/allure-results:/app/allure-results \
             -v $(pwd)/playwright/allure-report:/app/allure-report \
-            playwright-tests -c "npm run testChrome -- --grep @smoke || true && npx allure generate allure-results --clean -o allure-report"
+            playwright-tests -c "$TEST_CMD || true && npx allure generate allure-results --clean -o allure-report"
 
       - name: Upload Allure results as artifact
         if: always()
