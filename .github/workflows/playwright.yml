@@ -45,20 +45,28 @@ jobs:
           cd playwright
           docker build -t playwright-tests .
 
+      # create allure directories
       - name: Create directories for reports
         run: |
           mkdir -p playwright/allure-results
           mkdir -p playwright/allure-report
 
+      # Download prev allure history
       - name: Download previous Allure history
         continue-on-error: true
         run: |
-          gh_pages_url="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/history"
-          mkdir -p playwright/allure-results/history
+          # Fetch gh-pages branch
+          git fetch origin gh-pages --depth=1 || exit 0
           
-          # Try to download the history folder from gh-pages
-          wget -r -np -nH -R "index.html*" --cut-dirs=2 -P playwright/allure-results/ ${gh_pages_url}/ || echo "No history found, this might be the first run"
-
+          # Extract history folder if it exists
+          git checkout origin/gh-pages -- history 2>/dev/null || echo "No history found, this might be the first run"
+          
+          # Move history to allure-results if it was found
+          if [ -d "history" ]; then
+            mkdir -p playwright/allure-results/history
+            cp -r history/* playwright/allure-results/history/ 2>/dev/null || true
+            rm -rf history
+          fi
 
       - name: Run Playwright tests in Docker
         run: |
