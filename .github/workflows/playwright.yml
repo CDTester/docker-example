@@ -1,0 +1,74 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions: 
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout code
+      - name: 📥 Checkout code
+        uses: actions/checkout@v5
+
+      # Build Docker image
+      - name: 📦 Build Docker Image 
+        run: |
+          cd playwright
+          docker build -t playwright-tests .
+
+      - name: Create directories for reports
+        run: |
+          mkdir -p playwright/allure-results
+          mkdir -p playwright/allure-report
+
+      - name: Get Allure history
+        if: always()
+        run: |
+          gh pages download --destination playwright/allure-results/history --branch gh-pages || true
+        continue-on-error: true
+
+      - name: Run Playwright tests in Docker
+        run: |
+          docker run --rm \
+            --entrypoint /bin/bash \
+            -v $(pwd)/playwright/allure-results:/app/allure-results \
+            -v $(pwd)/playwright/allure-report:/app/allure-report \
+            playwright-tests /bin/bash -c "npx playwright test || true && npx allure generate allure-results --clean -o allure-report"
+
+      - name: Upload Allure results as artifact
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure-results
+          path: playwright/allure-results
+          retention-days: 30
+
+      - name: Upload Allure report as artifact
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure-report
+          path: playwright/allure-report
+          retention-days: 30
+
+      - name: Deploy to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./playwright/allure-report
+          keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
